@@ -9,10 +9,15 @@ public class player : MonoBehaviour
     public float velRot = 75;
     private Quaternion rotOriginal;
     private float rotMouseX = 0;
+    private float rotTecladoX = 0;
+    public LayerMask alvo;
+    public AudioSource som;
     // Start is called before the first frame update
     void Start()
     {
+        Cursor.visible = false;
         rbd = GetComponent<Rigidbody>();
+        som = GetComponent<AudioSource>();
         rotOriginal = transform.localRotation;
     }
 
@@ -27,10 +32,19 @@ public class player : MonoBehaviour
                                     new Vector3(moveLado * vel,
                                                 rbd.velocity.y,
                                                 moveFrente * vel));
+        rbd.velocity = velo;
 
         // Rotação usando Mouse
         rotMouseX += Input.GetAxis("Mouse X");
-        Quaternion lado = Quaternion.AngleAxis(rotMouseX, Vector3.up);
+
+        if (Input.GetKey(KeyCode.Q))
+        {
+            rotTecladoX -= 1;
+        }
+        else if (Input.GetKey(KeyCode.E))
+            rotTecladoX += 1;
+        Quaternion lado = Quaternion.AngleAxis(rotMouseX + rotTecladoX, Vector3.up);
+
         transform.localRotation = rotOriginal * lado;
         
         // Rotação usando Teclado
@@ -43,5 +57,18 @@ public class player : MonoBehaviour
             rot = 1;
 
         transform.Rotate(new Vector3(0, rot * Time.deltaTime * velRot, 0));
+
+        // tiro
+        if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0)) 
+        {
+            som.Play();
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, transform.forward, out hit, 100, alvo))
+            {
+                hit.collider.gameObject.GetComponent<Rigidbody>().AddForce(
+                                                    transform.forward * 500);
+
+            }
+        }
     }
 }
