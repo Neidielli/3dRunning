@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Mirror
   - NPC
+  - Pill
+  - PowerUp
+  - WinWall
   layers:
   - Default
   - TransparentFX

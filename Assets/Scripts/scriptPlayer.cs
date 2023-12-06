@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class player : MonoBehaviour
+public class scriptPlayer : MonoBehaviour
 {
     private Rigidbody rbd;
     public float vel = 5;
@@ -14,6 +14,8 @@ public class player : MonoBehaviour
     public LayerMask alvo;
     public AudioSource som;
     public SceneController sceneController;
+    public int shots = 3;
+    public int points = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -67,8 +69,11 @@ public class player : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.forward, out hit, 100, alvo))
             {
-                hit.collider.gameObject.GetComponent<Rigidbody>().AddForce(
-                                                    transform.forward * 500);
+                //hit.collider.gameObject.GetComponent<Rigidbody>().AddForce(
+                //transform.forward * 500);
+                // Destroi o NPC
+                Destroy(hit.collider.gameObject);
+                shots--;
 
             }
         }
@@ -78,7 +83,30 @@ public class player : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("NPC"))
         {
+            Cursor.visible = true;
             sceneController.EndGame();
+            Destroy(gameObject);
+        }
+
+        if (collision.gameObject.CompareTag("PowerUp"))
+        {
+            Destroy(collision.gameObject);
+            shots++;
+        }
+
+        if (collision.gameObject.CompareTag("Pill"))
+        {
+            Destroy(collision.gameObject);
+            points++;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("WinWall"))
+        {
+            Cursor.visible = true;
+            sceneController.WinGame();
         }
     }
 }
