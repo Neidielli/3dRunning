@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class player : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class player : MonoBehaviour
     private float rotTecladoX = 0;
     public LayerMask alvo;
     public AudioSource som;
+    public SceneController sceneController;
     // Start is called before the first frame update
     void Start()
     {
@@ -69,6 +71,14 @@ public class player : MonoBehaviour
                                                     transform.forward * 500);
 
             }
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("NPC"))
+        {
+            sceneController.EndGame();
         }
     }
 }
